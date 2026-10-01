@@ -29,6 +29,8 @@ Regra de ouro adotada nos prompts: tudo que não está na transcrição ou no c�
 
 ## Prompts customizados
 
+Os prompts abaixo são os que conduziram o trabalho com o Claude Code: o pedido inicial foi o enunciado do desafio, e estes descrevem as instruções de extração, geração e auditoria aplicadas aos documentos. Foram redigidos no decorrer da sessão com a própria IA, e não adaptados de prompts prontos do curso.
+
 **1. Extração dirigida da transcrição, com filtro do que NÃO entra**
 
 ```text
