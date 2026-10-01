@@ -24,11 +24,11 @@ Clientes B2B consultam `GET /orders` em loop para detectar mudança de status. O
 | OT-3 | Isolar o cliente lento/offline da API de pedidos | Timeout de 10 s por chamada; worker em processo separado |
 | OT-4 | Autenticidade e integridade do payload | HMAC-SHA256, secret por endpoint, HTTPS obrigatório |
 | OT-5 | Não perder eventos por indisponibilidade do cliente | 5 tentativas em ≈15 h; depois DLQ reprocessável |
-| OT-6 | Aderir às convenções do repositório | Módulo `src/modules/webhooks`, `AppError`, Pino, `WEBHOOK_*` |
+| OT-6 | Aderir às convenções do repositório | Módulo `webhooks` em `src/modules`, `AppError`, Pino, `WEBHOOK_*` |
 
 ## 3. Escopo e exclusões
 
-**Dentro:** tabelas de configuração, outbox, entregas e DLQ; `publishWebhookEvent`; worker (`src/worker.ts` *(arquivo novo, a criar)*); CRUD de webhooks; rotação de secret; consulta de entregas; replay de DLQ (ADMIN).
+**Dentro:** tabelas de configuração, outbox, entregas e DLQ; `publishWebhookEvent`; worker (a nova entry-point do worker); CRUD de webhooks; rotação de secret; consulta de entregas; replay de DLQ (ADMIN).
 
 **Fora (explicitamente):** e-mail ao cliente em caso de falha ([09:37] Larissa); rate limiting de saída ([09:39] Larissa/Diego); dashboard visual ([09:40] Larissa); arquivamento de eventos entregues ([09:08] Diego); múltiplos workers/ordenação global ([09:13] Larissa); webhooks **inbound** ([09:02] Marcos). Nenhuma alteração em `src/`, `prisma/` ou `tests/` faz parte **desta entrega documental**; este FDD descreve o que o time implementará.
 
@@ -55,7 +55,7 @@ Todas as PKs são UUID `@db.Char(36)`, como `prisma/schema.prisma` ([09:51] Lari
 
 1. `OrderController.changeStatus` → `OrderService.changeStatus(id, input, userId)` abre `prisma.$transaction`.
 2. Executa o fluxo atual: busca o pedido, valida `from !== to` e `canTransition(from, to)`, debita/repõe estoque, `tx.order.update`, `tx.orderStatusHistory.create`.
-3. **Novo:** `await publishWebhookEvent(tx, order, from, to)` (função em `src/modules/webhooks/webhook.publisher.ts` *(arquivo novo, a criar)*, **[Proposta FDD]** de arquivo; nome da função e assinatura vêm de [09:41] Bruno).
+3. **Novo:** `await publishWebhookEvent(tx, order, from, to)` (função em novo arquivo `publisher` do módulo webhooks, **[Proposta FDD]** de arquivo; nome da função e assinatura vêm de [09:41] Bruno).
 4. Dentro da função:
    1. `tx.webhookEndpoint.findMany({ where: { customerId: order.customerId, active: true } })`.
    2. Filtra os que contêm `to` em `events` (**filtro na inserção**, [09:34] Bruno). Se nenhum, retorna sem inserir.
@@ -65,7 +65,7 @@ Todas as PKs são UUID `@db.Char(36)`, como `prisma/schema.prisma` ([09:51] Lari
 
 ### 5.2 Processamento pelo worker
 
-Entry-point `src/worker.ts`; lógica em `src/modules/webhooks/webhook.processor.ts` *(arquivo novo, a criar)* ([09:28] Bruno).
+Entry-point do worker; lógica em novo arquivo `processor` do módulo webhooks ([09:28] Bruno).
 
 ```
 loop a cada 2 s (setTimeout recursivo, sem sobreposição de ciclos):
@@ -369,13 +369,13 @@ Nunca logar `secret`, `previousSecret` nem o valor de `X-Signature` completo (ve
 | `src/middlewares/validate.middleware.ts` | Validação de body/params/query com schemas Zod do módulo. |
 | `src/app.ts` | `buildControllers` instancia `WebhookRepository`, `WebhookService`, `WebhookController` e os devolve em `Controllers`. |
 | `src/routes/index.ts` | `buildApiRouter` monta `/webhooks` e `/admin/webhooks` (novo `webhook.routes.ts`), e `Controllers` ganha `webhooks`. |
-| `src/server.ts` | Modelo para `src/worker.ts` (bootstrap, `logger.info`, `SIGINT`/`SIGTERM`, `prisma.$disconnect()`); **não é modificado** — o worker é outro processo. |
+| `src/server.ts` | Modelo para a entry-point do worker (bootstrap, `logger.info`, `SIGINT`/`SIGTERM`, `prisma.$disconnect()`); **não é modificado** — o worker é outro processo. |
 | `src/config/database.ts` | `createPrismaClient()` reutilizado pelo worker para instanciar seu próprio client ([09:30] Bruno). |
 | `src/config/env.ts` | Novas variáveis (ex.: `WEBHOOK_BATCH_SIZE`) entram no `envSchema` Zod. O worker valida o mesmo `env`. |
 | `src/shared/logger/index.ts` | Reuso do `logger`; acrescentar `*.secret` ao `redactPaths` (7.3). |
 | `src/shared/http/response.ts` | `paginated()` na listagem de webhooks. |
 | `prisma/schema.prisma` | Novos models com `@@map`, UUID `Char(36)` e relações com `Customer`/`Order`; nova migration em `prisma/migrations/`. |
-| `package.json` | Novo script `"worker"` (ex.: `tsx watch --env-file=.env src/worker.ts`, espelhando `dev`) e correspondente de produção. |
+| `package.json` | Novo script `"worker"` (ex.: `tsx watch --env-file=.env <entry-point do worker>`, espelhando `dev`) e correspondente de produção. |
 | `tests/setup.ts` | O `beforeEach` limpa tabelas em ordem de FK; as novas tabelas dependentes de `customers`/`orders` precisarão entrar nessa limpeza ao implementar. |
 
 ---

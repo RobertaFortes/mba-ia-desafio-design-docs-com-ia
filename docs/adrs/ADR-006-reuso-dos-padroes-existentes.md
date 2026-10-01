@@ -13,7 +13,7 @@ A codebase tem convenções claras: cada domínio é um módulo em `src/modules/
 
 Seguir os padrões existentes, sem introduzir bibliotecas ou convenções novas:
 
-- **Estrutura de módulo:** `src/modules/webhooks/` com `webhook.controller.ts`, `webhook.service.ts`, `webhook.repository.ts`, `webhook.routes.ts`, `webhook.schemas.ts`, mais `webhook.worker.ts`/`webhook.processor.ts` ([09:27]/[09:28] Bruno). Registro no `src/app.ts` (`buildControllers`) e `src/routes/index.ts` (`buildApiRouter`), como os demais módulos.
+- **Estrutura de módulo:** módulo `webhooks` em `src/modules` com controller, service, repository, routes e schemas, mais o arquivo do worker/processor ([09:27]/[09:28] Bruno). Registro no `src/app.ts` (`buildControllers`) e `src/routes/index.ts` (`buildApiRouter`), como os demais módulos.
 - **Erros:** classes derivadas de `AppError` (`src/shared/errors/app-error.ts`, `http-errors.ts`) com `errorCode` prefixado `WEBHOOK_` (ex.: `WEBHOOK_NOT_FOUND`, `WEBHOOK_INVALID_URL`, `WEBHOOK_SECRET_REQUIRED`) ([09:28] Bruno, [09:29] Larissa). O `errorMiddleware` (`src/middlewares/error.middleware.ts`) permanece **inalterado**.
 - **Logging:** `logger` Pino de `src/shared/logger/index.ts`; nada novo ([09:29] Bruno).
 - **Validação:** schemas Zod + `validate` (`src/middlewares/validate.middleware.ts`), incluindo a regra de URL https ([09:23] Sofia).

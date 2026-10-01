@@ -77,7 +77,7 @@ Foram **3 ciclos principais** de geração, revisão crítica e correção.
    - *Ordenação:* percebi que o retry pode reordenar eventos do mesmo pedido, e que a "ordenação por `order_id`" da reunião só vale sem falhas. Isso virou limitação documentada no FDD e risco no PRD.
    - *Logger:* ao ler `src/shared/logger/index.ts`, `redactPaths` não cobre `secret`; dado o histórico de vazamento citado por Diego, entrou como ajuste necessário no FDD.
 3. **Verificação por script e correção de inconsistências.**
-   - O script de checagem encontrou arquivos novos (`src/worker.ts`, `webhook.processor.ts`, `webhook.publisher.ts`, `webhook.worker.ts`) citados como se existissem; passaram a ser marcados *(arquivo novo, a criar)* para não violar "nenhum arquivo citado é inexistente".
+   - O script de checagem encontrou arquivos novos (entry-point do worker, processor, publisher) citados como se existissem; passaram a ser marcados *(arquivo novo, a criar)* para não violar "nenhum arquivo citado é inexistente".
    - Um exemplo de resposta de `deliveries` mostrava `statusCode: 503` junto de erro de timeout (incoerente, pois timeout não tem status); corrigido.
    - Um ADR tinha uma referência de timestamp malformada (`[08:08]→[09:08]`); corrigida.
    - Resultado do Tracker: 190 linhas, 78% com Fonte = TRANSCRICAO e 41 com Fonte = CODIGO (caminhos verificados).

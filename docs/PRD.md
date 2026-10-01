@@ -93,7 +93,7 @@ Cenários:
 | RNF-05 | Timeout de 10 s por chamada HTTP; estouro conta como falha | [09:42] Diego |
 | RNF-06 | Worker em processo separado da API, mesmo banco | [09:11] Diego |
 | RNF-07 | Ordenação por `order_id` apenas, com single-worker (limitação conhecida) | [09:13] Larissa |
-| RNF-08 | Reuso dos padrões do projeto: módulo `src/modules/webhooks`, `AppError`, Pino, códigos `WEBHOOK_*`, IDs UUID | [09:30] Larissa, [09:51] Larissa |
+| RNF-08 | Reuso dos padrões do projeto: módulo `webhooks` em `src/modules`, `AppError`, Pino, códigos `WEBHOOK_*`, IDs UUID | [09:30] Larissa, [09:51] Larissa |
 | RNF-09 | CRUD acessível a qualquer role autenticada (a endurecer no futuro); replay só ADMIN | [09:36]–[09:37] Sofia |
 | RNF-10 | Revisão de segurança de HMAC e geração de secret antes do deploy (2 dias úteis) | [09:46] Sofia |
 

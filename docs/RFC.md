@@ -28,11 +28,11 @@ changeStatus (tx) ──► webhook_outbox ──(poll 2s)──► Worker ─�
 ```
 
 1. **Outbox atômica.** O evento é inserido, já com o payload renderizado (snapshot), dentro da transação que muda o status. Só são criadas linhas para webhooks que assinam aquele status. → [ADR-001](adrs/ADR-001-outbox-no-mysql.md), [ADR-007](adrs/ADR-007-publicacao-transacional-em-change-status.md)
-2. **Worker separado.** Novo entry-point `src/worker.ts` *(arquivo novo, a criar)* (`npm run worker`), com `PrismaClient` próprio, single-worker. → [ADR-002](adrs/ADR-002-worker-separado-em-polling.md)
+2. **Worker separado.** Novo entry-point a nova entry-point do worker (`npm run worker`), com `PrismaClient` próprio, single-worker. → [ADR-002](adrs/ADR-002-worker-separado-em-polling.md)
 3. **Resiliência.** Timeout de 10 s por chamada; 5 tentativas com backoff exponencial; esgotado, vai para a DLQ, reprocessável manualmente por um ADMIN. → [ADR-003](adrs/ADR-003-retry-backoff-e-dlq.md)
 4. **Segurança.** HTTPS obrigatório, HMAC-SHA256 do corpo, secret única por endpoint, rotação com 24 h de convivência. → [ADR-004](adrs/ADR-004-hmac-sha256-secret-por-endpoint.md)
 5. **Semântica de entrega.** At-least-once; o cliente deduplica por `X-Event-Id`. → [ADR-005](adrs/ADR-005-at-least-once-com-x-event-id.md)
-6. **API.** CRUD de configuração de webhooks e consulta de entregas para qualquer usuário autenticado; replay de DLQ exige role `ADMIN`. Novo módulo `src/modules/webhooks`, reaproveitando `AppError`, Pino e `errorMiddleware`, com códigos `WEBHOOK_*`. → [ADR-006](adrs/ADR-006-reuso-dos-padroes-existentes.md)
+6. **API.** CRUD de configuração de webhooks e consulta de entregas para qualquer usuário autenticado; replay de DLQ exige role `ADMIN`. Novo módulo `webhooks` em `src/modules`, reaproveitando `AppError`, Pino e `errorMiddleware`, com códigos `WEBHOOK_*`. → [ADR-006](adrs/ADR-006-reuso-dos-padroes-existentes.md)
 
 ## 4. Alternativas consideradas
 

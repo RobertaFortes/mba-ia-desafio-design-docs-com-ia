@@ -13,7 +13,7 @@ Com a outbox em MySQL (ADR-001), é preciso um consumidor que leia os eventos pe
 
 - O worker faz **polling a cada 2 segundos**, buscando os eventos pendentes mais antigos em **batch pequeno** ([09:08] e [09:09] Diego). Latência mínima de 2s no pior caso, aceita ([09:10] Larissa).
 - O worker roda como **processo separado da API**, para que reiniciar a API não perca o worker ([09:11] Diego).
-- Nova entry-point `src/worker.ts` *(arquivo novo, a criar)* com script `npm run worker` ([09:11] Larissa); a lógica de processamento fica em `src/modules/webhooks/webhook.worker.ts` *(arquivo novo, a criar)* ou `webhook.processor.ts` ([09:28] Bruno).
+- A nova entry-point do worker com script `npm run worker` ([09:11] Larissa); a lógica de processamento fica em um arquivo `worker` no módulo webhooks ou `webhook.processor.ts` ([09:28] Bruno).
 - O worker usa o **mesmo banco** (mesma `DATABASE_URL`) mas instancia **seu próprio `PrismaClient`**, pois o client é por processo ([09:30] Bruno).
 - **Single-worker** por enquanto. A ordem de entrega segue `created_at` da outbox, o que dá ordenação implícita por `order_id`; **não há garantia de ordering global** ([09:12] Diego, [09:13] Larissa).
 

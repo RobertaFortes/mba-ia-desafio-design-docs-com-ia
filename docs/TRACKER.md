@@ -60,7 +60,7 @@ Mapeia cada item dos documentos à origem na `TRANSCRICAO.md` (formato `[hh:mm] 
 | PRD-TEST-01 | docs/PRD.md | Estratégia | Testes seguem o stack Vitest existente | CODIGO | vitest.config.ts |
 | PRD-TEST-02 | docs/PRD.md | Estratégia | Testes de integração seguem tests/orders.test.ts e factories | CODIGO | tests/orders.test.ts |
 | RFC-PROP-01 | docs/RFC.md | Decisão | Outbox atômica com snapshot do payload | TRANSCRICAO | [09:06] Diego |
-| RFC-PROP-02 | docs/RFC.md | Decisão | Worker separado `src/worker.ts`, `npm run worker` | TRANSCRICAO | [09:11] Larissa |
+| RFC-PROP-02 | docs/RFC.md | Decisão | Worker separado (nova entry-point), `npm run worker` | TRANSCRICAO | [09:11] Larissa |
 | RFC-PROP-03 | docs/RFC.md | Decisão | Resumo das decisões antes do fechamento da reunião | TRANSCRICAO | [09:48] Larissa |
 | RFC-CTX-01 | docs/RFC.md | Contexto | Transação de changeStatus atualiza order, histórico e estoque | CODIGO | src/modules/orders/order.service.ts |
 | RFC-ALT-01 | docs/RFC.md | Alternativa | Síncrono em changeStatus, descartado | TRANSCRICAO | [09:04] Bruno |
@@ -87,7 +87,7 @@ Mapeia cada item dos documentos à origem na `TRANSCRICAO.md` (formato `[hh:mm] 
 | ADR-001-e | docs/adrs/ADR-001-outbox-no-mysql.md | Contexto | Schema com UUID Char(36) e MySQL | CODIGO | prisma/schema.prisma |
 | ADR-002 | docs/adrs/ADR-002-worker-separado-em-polling.md | Decisão | Worker em polling de 2 s | TRANSCRICAO | [09:10] Larissa |
 | ADR-002-a | docs/adrs/ADR-002-worker-separado-em-polling.md | Decisão | Processo separado da API | TRANSCRICAO | [09:11] Diego |
-| ADR-002-b | docs/adrs/ADR-002-worker-separado-em-polling.md | Decisão | Entry-point src/worker.ts + npm run worker | TRANSCRICAO | [09:11] Larissa |
+| ADR-002-b | docs/adrs/ADR-002-worker-separado-em-polling.md | Decisão | Nova entry-point do worker + npm run worker | TRANSCRICAO | [09:11] Larissa |
 | ADR-002-c | docs/adrs/ADR-002-worker-separado-em-polling.md | Decisão | PrismaClient próprio no worker | TRANSCRICAO | [09:30] Bruno |
 | ADR-002-d | docs/adrs/ADR-002-worker-separado-em-polling.md | Restrição | Single-worker, ordem por order_id | TRANSCRICAO | [09:12] Diego |
 | ADR-002-e | docs/adrs/ADR-002-worker-separado-em-polling.md | Contexto | Entry-point atual src/server.ts como modelo | CODIGO | src/server.ts |
@@ -105,7 +105,7 @@ Mapeia cada item dos documentos à origem na `TRANSCRICAO.md` (formato `[hh:mm] 
 | ADR-005-b | docs/adrs/ADR-005-at-least-once-com-x-event-id.md | Trade-off | Responsabilidade de dedupe vai para o cliente | TRANSCRICAO | [09:25] Sofia |
 | ADR-005-c | docs/adrs/ADR-005-at-least-once-com-x-event-id.md | Decisão | Headers do envio incluindo X-Webhook-Id | TRANSCRICAO | [09:44] Sofia |
 | ADR-006 | docs/adrs/ADR-006-reuso-dos-padroes-existentes.md | Decisão | Reuso máximo dos padrões existentes | TRANSCRICAO | [09:30] Larissa |
-| ADR-006-a | docs/adrs/ADR-006-reuso-dos-padroes-existentes.md | Decisão | Módulo src/modules/webhooks com controller/service/repository/routes/schemas | TRANSCRICAO | [09:27] Bruno |
+| ADR-006-a | docs/adrs/ADR-006-reuso-dos-padroes-existentes.md | Decisão | Módulo webhooks em src/modules com controller/service/repository/routes/schemas | TRANSCRICAO | [09:27] Bruno |
 | ADR-006-b | docs/adrs/ADR-006-reuso-dos-padroes-existentes.md | Decisão | Erros WEBHOOK_* sobre AppError | TRANSCRICAO | [09:28] Bruno |
 | ADR-006-c | docs/adrs/ADR-006-reuso-dos-padroes-existentes.md | Contexto | Hierarquia AppError | CODIGO | src/shared/errors/app-error.ts |
 | ADR-006-d | docs/adrs/ADR-006-reuso-dos-padroes-existentes.md | Contexto | Error middleware trata AppError, Zod, Prisma | CODIGO | src/middlewares/error.middleware.ts |
@@ -184,7 +184,7 @@ Mapeia cada item dos documentos à origem na `TRANSCRICAO.md` (formato `[hh:mm] 
 | FDD-INT-06 | docs/FDD.md | Integração | validate() com schemas Zod | CODIGO | src/middlewares/validate.middleware.ts |
 | FDD-INT-07 | docs/FDD.md | Integração | buildControllers registra o módulo | CODIGO | src/app.ts |
 | FDD-INT-08 | docs/FDD.md | Integração | buildApiRouter monta /webhooks e /admin/webhooks | CODIGO | src/routes/index.ts |
-| FDD-INT-09 | docs/FDD.md | Integração | worker.ts espelha server.ts | CODIGO | src/server.ts |
+| FDD-INT-09 | docs/FDD.md | Integração | Entry-point do worker espelha server.ts | CODIGO | src/server.ts |
 | FDD-INT-10 | docs/FDD.md | Integração | env.ts recebe novas variáveis | CODIGO | src/config/env.ts |
 | FDD-INT-11 | docs/FDD.md | Integração | Novos models e migration | CODIGO | prisma/schema.prisma |
 | FDD-INT-12 | docs/FDD.md | Integração | Script "worker" no package.json | CODIGO | package.json |
