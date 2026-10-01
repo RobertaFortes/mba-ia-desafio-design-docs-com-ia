@@ -68,7 +68,7 @@ changeStatus (tx) ──► webhook_outbox ──(poll 2s)──► Worker ─�
 
 ## 6. Impacto e riscos
 
-- **Código existente:** alteração localizada em `src/modules/orders/order.service.ts` (`changeStatus`), registro do módulo em `src/app.ts` e `src/routes/index.ts`, novas tabelas no `prisma/schema.prisma` e nova entry-point `src/worker.ts`. O contrato HTTP de pedidos não muda.
+- **Código existente:** alteração localizada em `src/modules/orders/order.service.ts` (`changeStatus`), registro do módulo em `src/app.ts` e `src/routes/index.ts`, novas tabelas no `prisma/schema.prisma` e nova entry-point do worker. O contrato HTTP de pedidos não muda.
 - **Desempenho:** a transação de `changeStatus` fica ligeiramente mais longa (consulta + inserções na outbox); o polling adiciona leitura constante ao MySQL.
 - **Riscos principais:** falha na outbox bloqueia mudança de status (intencional); worker único é ponto único de falha e de vazão; duplicatas exigem que o cliente implemente dedupe; vazamento de secret (mitigado por secret por endpoint e rotação). Detalhes e mitigações no [PRD](PRD.md#10-riscos-e-mitigação) e no [FDD](FDD.md).
 - **Prazo:** 3 sprints, mais 2 dias úteis de revisão de segurança antes do deploy; meta do cliente: fim de novembro ([09:45] Marcos, [09:46] Larissa, Sofia).
